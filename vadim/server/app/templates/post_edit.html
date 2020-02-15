@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <form method="post" enctype="multipart/form-data">
+    {{form.hidden_tag()}}
+    <center>
+      <table width="70%" height="70%" border=1>
+        <tr>
+          <td>
+            <center>{{ form.topic.label }}<br></center>
+          </td>
+          <td>
+            <center>
+              {{ form.topic(value=post['TOPIC']) }}
+                  {% for error in form.topic.errors %}
+                  <span style="color: red;">[{{ error }}]</span>
+              {% endfor %}
+            </center>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <center>{{ form.body.label }}</center>
+          </td>
+          <td>
+            <center>
+              {{ form.body(value=post['BODY']) }}
+              {% for error in form.body.errors %}
+              <span style="color: red;">[{{ error }}]</span>
+              {% endfor %}
+            </center>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <center>{{form.network.label}}</center>
+          </td>
+          <td>
+            <center>
+              {{ form.network(value=post['NETWORK']) }}
+              {% for error in form.network.errors %}
+              <span style="color: red;">[{{ error }}]</span>
+              {% endfor %}
+            </center>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <center>Планируемая дата к публикации</center>
+          </td>
+          <td>
+            <center>
+              {{ form.time(value=post['TIME']) }}
+                {% for error in form.time.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </center>
+          </td>
+        </tr>
+      </table>
+    </center>
+      <center>{{ form.toDraft() }}{{ form.submit() }}{{ form.reLook() }}</center>
+
+      <center>Media
+      {% include "upload.html" %}</center>
+  </form><br>
+  {% print(post) %}
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Добрый день, {{ current_user.username }} в течении 24 часов администратор активирует вашу учётную запись</h1>
+    <h2>После этого у вас появится лента с вашими проектами! Спасибо!<br>Ваша смм команда!</h2>
+    <hr>
+    {% for post in posts %}
+    <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,5 @@
+{% if (current_project == Project['id']) %}
+  <b><a href={{ url_for('projects', project=Project['id']) }}>{{ Project['name'] }} active</a></b>
+{% else %}
+  <a href={{ url_for('projects', project=Project['id']) }}>{{ Project['name'] }}</a>
+{% endif %}
