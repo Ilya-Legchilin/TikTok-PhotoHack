@@ -24,8 +24,8 @@ def photo_uploader():
             flash('No file part')
         file = request.files['file']
         if file:
-            filename = secure_filename(file.filename)
-            directory = os.path.join("/frames")
+            filename = 'selfie.png'
+            directory = os.path.join("vadim/server/frames")
             if not os.path.exists(directory):
                 os.makedirs(directory)
             file.save(os.path.join(directory, filename))
