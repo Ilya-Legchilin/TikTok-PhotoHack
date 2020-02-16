@@ -1,5 +1,5 @@
-import os
 # -*- coding: utf-8 -*-
+import os
 from flask import render_template, flash, redirect, url_for, request
 import json
 from functools import wraps
@@ -43,22 +43,8 @@ def photo_uploader():
         file = request.files['file']
         if file:
             filename = secure_filename(file.filename)
-            directory = os.path.join("photo")
+            directory = os.path.join("../../frames")
             if not os.path.exists(directory):
                 os.makedirs(directory)
             file.save(os.path.join(directory, filename))
         return redirect(url_for("upl_ph"))
-
-@app.route('/video_uploader', methods = ["GET", "POST"])
-def video_uploader():
-    if request.method == 'POST':
-        if 'files[]' not in request.files:
-            flash('No file part')
-        file = request.files['file']
-        if file:
-            filename = secure_filename(file.filename)
-            directory = os.path.join("video")
-            if not os.path.exists(directory):
-                os.makedirs(directory)
-            file.save(os.path.join(directory, filename))
-        return redirect(url_for("upl_vid"))
