@@ -13,24 +13,6 @@ from app import app
 def index():
     return render_template("main_page.html")
 
-@app.route('/upl_vid')
-def upl_vid():
-    if request.method == 'POST':
-        if 'files[]' not in request.files:
-            flash('No file part')
-        files = request.files.getlist('files[]')
-        for file in files:
-            if file:# and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                #type = get_type(filename)
-                directory = os.path.join("video")
-                if not os.path.exists(directory):
-                    os.makedirs(directory)
-                file.save(os.path.join(directory, filename))
-
-        flash('File(s) successfully uploaded')
-    return render_template("upload_video.html")
-
 @app.route('/upl_ph')
 def upl_ph():
     return render_template("upload_photo.html")
@@ -43,7 +25,7 @@ def photo_uploader():
         file = request.files['file']
         if file:
             filename = secure_filename(file.filename)
-            directory = os.path.join("../../frames")
+            directory = os.path.join("/frames")
             if not os.path.exists(directory):
                 os.makedirs(directory)
             file.save(os.path.join(directory, filename))
