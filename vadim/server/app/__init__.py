@@ -1,61 +1,67 @@
-from flask import Flask, redirect, url_for, request, Response
-from werkzeug.exceptions import HTTPException
-from config import Config
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_login import LoginManager
-import flask_admin as admin #добавляем админа
-from flask_admin.contrib.sqla import ModelView
-from flask_admin.contrib.sqla.filters import BooleanEqualFilter
-
-
+import os
+# -*- coding: utf-8 -*-
+from flask import render_template, flash, redirect, url_for, request
+import json
+from functools import wraps
+import os
+import urllib.request
+from werkzeug.utils import secure_filename
+from flask import Flask
 app = Flask(__name__)
-UPLOAD_FOLDER = 'static'
-#app.secret_key = "secret key"
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 99 * 1024 * 1024
-app.config.from_object(Config)
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-login = LoginManager(app)
-login.login_view = 'login'
 
-from app import routes, models
+@app.route('/')
+@app.route('/main')
+def index():
+    return render_template("main_page.html")
 
-app.config['ADMIN_CREDENTIALS'] = ('admin', 'qwerty')
+@app.route('/upl_vid')
+def upl_vid():
+    if request.method == 'POST':
+        if 'files[]' not in request.files:
+            flash('No file part')
+        files = request.files.getlist('files[]')
+        for file in files:
+            if file:# and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                #type = get_type(filename)
+                directory = os.path.join("video")
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+                file.save(os.path.join(directory, filename))
 
-class FlaskyAdminIndexView(admin.AdminIndexView):
-    @admin.expose('/')
-    def index(self):
-        print('ping 8.8.8.8')
-        # if current_user.is_authenticated:     ###FICHA
-        #     print('ping')                     ###FICHA
-        # else:                                 ###FICHA
-        #     return redirect(url_for('index')) ###FICHA
-        return super(FlaskyAdminIndexView, self).index()
+        flash('File(s) successfully uploaded')
+    return render_template("upload_video.html")
 
-    def is_accessible(self):
-        auth = request.authorization or request.environ.get('REMOTE_USER')  # workaround for Apache
-        if not auth or (auth.username, auth.password) != app.config['ADMIN_CREDENTIALS']:
-            raise HTTPException('', Response(
-                "Please log in.", 401,
-                {'WWW-Authenticate': 'Basic realm="Login Required"'}
-            ))
-        return True
+@app.route('/upl_ph')
+def upl_ph():
+    return render_template("upload_photo.html")
 
-admin = admin.Admin(index_view=FlaskyAdminIndexView(),name="диспетер СММ", template_mode='bootstrap3')
+@app.route('/photo_uploader', methods = ["GET", "POST"])
+def photo_uploader():
+    if request.method == 'POST':
+        if 'files[]' not in request.files:
+            flash('No file part')
+        file = request.files['file']
+        if file:
+            filename = secure_filename(file.filename)
+            directory = os.path.join("photo")
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+            file.save(os.path.join(directory, filename))
+        return redirect(url_for("upl_ph"))
 
-class UserView(ModelView):
-    can_delete = True#False  # disable model deletion
-    can_create = True#False
-    can_edit = True
-    #excluded_list_columns = ('password_hash',)
-    #column_filters = (BooleanEqualFilter(column=routes.User.week, name='Week'),)
+@app.route('/video_uploader', methods = ["GET", "POST"])
+def video_uploader():
+    if request.method == 'POST':
+        if 'files[]' not in request.files:
+            flash('No file part')
+        file = request.files['file']
+        if file:
+            filename = secure_filename(file.filename)
+            directory = os.path.join("video")
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+            file.save(os.path.join(directory, filename))
+        return redirect(url_for("upl_vid"))
 
-class PostView(ModelView):
-    page_size = 50  # the number of entries to display on the list view
-
-admin.add_view(ModelView(routes.Photos, db.session))
-admin.add_view(ModelView(routes.Videos, db.session))
-
-admin.init_app(app)
+app.run()
