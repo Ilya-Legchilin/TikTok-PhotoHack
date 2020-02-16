@@ -55,9 +55,7 @@ class UserView(ModelView):
 class PostView(ModelView):
     page_size = 50  # the number of entries to display on the list view
 
-admin.add_view(UserView(routes.User, db.session))
-admin.add_view(UserView(routes.Post, db.session))
-admin.add_view(UserView(routes.Project, db.session))
-admin.add_view(UserView(routes.Users_Projects, db.session))
+admin.add_view(ModelView(routes.Photos, db.session))
+admin.add_view(ModelView(routes.Videos, db.session))
 
 admin.init_app(app)
