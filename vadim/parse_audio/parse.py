@@ -43,4 +43,4 @@ def sample_recognize(storage_uri):
             print(key, ' : ', timestamps[key])
 
 
-sample_recognize('gs://rapidcrew/draka.wav')
+sample_recognize('gs://titktokrapidcrew/letitsnow.wav')
